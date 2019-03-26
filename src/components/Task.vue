@@ -1,7 +1,17 @@
 <template>
 	<div class="container">
 		<h2>任务中心</h2>
-	
+	<div class="preview">
+		<img :src="imgUrl"/>
+	</div>
+	<form>
+		<div class="upload">
+		      选择文件
+			  <input type="file" @change="getFile($event)" />
+			</div>
+			<br />
+			<button @click="submit($event)" class="sub-btn">提交</button>
+	</form>
 	</div>
 </template>
 
@@ -10,9 +20,29 @@
 		name:'Task',
 		data(){
 			return{
-				msg:'这是消息页'
+				imgUrl:'',
+				file:''	
 			};
+		},
+		methods:{
+			getFile:function(event){
+				this.file = event.target.files[0];
+				var windowURL =window.URL || window.webkitURL;
+				alert(windowURL.createObjectURL(this.file));
+				this.imgUrl = windowURL.createObjectURL(this.file);
+			},
+			submit:function(event){
+				event.preventDefault();
+				let formData = new FormData();
+				formData.append('file',this.file);
+				this.$http.post('http://localhost：8080/upload',formData)
+				.then(function(response){
+					alert(response.data);
+					this.imgUrl = response.data;
+				});
+			}
 		}
+		
 	};
 </script>
 
